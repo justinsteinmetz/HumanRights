@@ -392,7 +392,8 @@
   <h2>Rank It</h2>
   <p class="timing">⏱ 4 minutes</p>
 
-  <p><strong>Tap</strong> an item to select it, then <strong>tap another</strong> to swap their positions. Rank from <strong>most important</strong> (1) to <strong>least important</strong> (8).</p>
+  <p>Tap an item to select it, then tap where you want it to go.</p>
+  <div id="rankHint" style="display:none; background:var(--rust); color:white; padding:0.5rem 1rem; font-size:0.82rem; font-weight:600; border-radius:3px; margin-bottom:0.5rem;">✓ Selected — now tap another item to swap</div>
 
   <div class="rank-grid" id="rankGrid">
     <div class="rank-item" draggable="true" data-id="a">
@@ -666,17 +667,22 @@
     updateNums();
   }
 
+  const rankHint = document.getElementById('rankHint');
+
   function handleSelect(item) {
     if (selected === null) {
       selected = item;
       item.classList.add('drag-over');
+      rankHint.style.display = 'block';
     } else if (selected === item) {
       selected.classList.remove('drag-over');
       selected = null;
+      rankHint.style.display = 'none';
     } else {
       swapItems(selected, item);
       selected.classList.remove('drag-over');
       selected = null;
+      rankHint.style.display = 'none';
     }
   }
 
