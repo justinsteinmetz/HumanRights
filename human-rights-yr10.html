@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>What Is a Right? — Year 10</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,300&display=swap');
+
+  :root {
+    --ink: #1a1410;
+    --paper: #f5f0e8;
+    --rust: #b84c2b;
+    --gold: #c9922a;
+    --mid: #7a6f63;
+    --rule: #d4c9b8;
+    --highlight: #fff3cd;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Source Serif 4', Georgia, serif;
+    background: var(--paper);
+    color: var(--ink);
+    min-height: 100vh;
+  }
+
+  /* NAV */
+  nav {
+    display: flex;
+    gap: 0;
+    border-bottom: 2px solid var(--ink);
+    background: var(--paper);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  nav button {
+    flex: 1;
+    padding: 0.65rem 0.5rem;
+    border: none;
+    border-right: 1px solid var(--rule);
+    background: transparent;
+    font-family: 'Source Serif 4', serif;
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--mid);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  nav button:last-child { border-right: none; }
+  nav button.active {
+    background: var(--ink);
+    color: var(--paper);
+  }
+  nav button:hover:not(.active) {
+    background: var(--rule);
+    color: var(--ink);
+  }
+
+  /* SECTIONS */
+  section { display: none; padding: 2rem 1.5rem 3rem; max-width: 760px; margin: 0 auto; }
+  section.active { display: block; }
+
+  /* HEADER */
+  .lesson-header {
+    border-bottom: 2px solid var(--ink);
+    padding-bottom: 1.2rem;
+    margin-bottom: 2rem;
+  }
+  .lesson-header .kicker {
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--rust);
+    font-weight: 600;
+    margin-bottom: 0.4rem;
+  }
+  .lesson-header h1 {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: clamp(2rem, 6vw, 3.2rem);
+    font-weight: 900;
+    line-height: 1.05;
+    color: var(--ink);
+    letter-spacing: -0.02em;
+  }
+  .lesson-header .meta {
+    margin-top: 0.6rem;
+    font-size: 0.8rem;
+    color: var(--mid);
+    font-style: italic;
+  }
+
+  /* SECTION TITLES */
+  .section-label {
+    display: inline-block;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--paper);
+    background: var(--rust);
+    padding: 0.2rem 0.5rem;
+    margin-bottom: 1rem;
+  }
+  h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 0.5rem;
+    line-height: 1.2;
+  }
+  h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin: 1.4rem 0 0.5rem;
+    color: var(--ink);
+  }
+  p {
+    font-size: 0.95rem;
+    line-height: 1.7;
+    color: var(--ink);
+    margin-bottom: 0.8rem;
+  }
+  .timing {
+    font-size: 0.72rem;
+    font-style: italic;
+    color: var(--gold);
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    margin-bottom: 1rem;
+  }
+
+  /* DIVIDER */
+  hr {
+    border: none;
+    border-top: 1px solid var(--rule);
+    margin: 1.5rem 0;
+  }
+
+  /* CARD */
+  .card {
+    background: white;
+    border: 1px solid var(--rule);
+    border-left: 4px solid var(--rust);
+    padding: 1.1rem 1.3rem;
+    margin: 1rem 0;
+    border-radius: 0 4px 4px 0;
+  }
+  .card.gold { border-left-color: var(--gold); }
+  .card.ink { border-left-color: var(--ink); background: #fafaf8; }
+
+  /* RANKING TASK */
+  .rank-grid {
+    display: grid;
+    gap: 0.5rem;
+    margin: 1rem 0;
+  }
+  .rank-item {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    background: white;
+    border: 1px solid var(--rule);
+    padding: 0.7rem 1rem;
+    cursor: grab;
+    border-radius: 3px;
+    transition: box-shadow 0.15s, border-color 0.15s;
+    font-size: 0.92rem;
+  }
+  .rank-item:hover { border-color: var(--rust); }
+  .rank-item.dragging { opacity: 0.4; }
+  .rank-item.drag-over { border-color: var(--gold); box-shadow: 0 2px 12px rgba(0,0,0,0.1); }
+  .rank-handle {
+    color: var(--mid);
+    font-size: 1rem;
+    user-select: none;
+    flex-shrink: 0;
+  }
+  .rank-num {
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 50%;
+    background: var(--ink);
+    color: var(--paper);
+    font-size: 0.72rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .rank-item span { flex: 1; }
+
+  /* DISCUSSION CARDS */
+  .q-grid {
+    display: grid;
+    gap: 0.8rem;
+  }
+  .q-card {
+    background: white;
+    border: 1px solid var(--rule);
+    padding: 1rem 1.2rem;
+    position: relative;
+    border-radius: 3px;
+  }
+  .q-num {
+    position: absolute;
+    top: -0.5rem;
+    left: 1rem;
+    background: var(--rust);
+    color: white;
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 0.1rem 0.4rem;
+    letter-spacing: 0.05em;
+  }
+  .q-card p { margin-bottom: 0; margin-top: 0.2rem; font-size: 0.93rem; }
+  .q-card .q-level {
+    font-size: 0.65rem;
+    color: var(--mid);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 0.3rem;
+  }
+
+  /* VOCAB */
+  .vocab-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.88rem;
+    margin: 1rem 0;
+  }
+  .vocab-table th {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 0.5rem 0.7rem;
+    text-align: left;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+  }
+  .vocab-table td {
+    padding: 0.55rem 0.7rem;
+    border-bottom: 1px solid var(--rule);
+    vertical-align: top;
+    line-height: 1.5;
+  }
+  .vocab-table tr:nth-child(even) td { background: white; }
+
+  /* CONCEPT BOX */
+  .concept-box {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 1.4rem 1.5rem;
+    margin: 1.2rem 0;
+    border-radius: 3px;
+  }
+  .concept-box h3 { color: var(--gold); margin-top: 0; }
+  .concept-box p { color: #ddd8cf; font-size: 0.9rem; margin-bottom: 0.5rem; }
+  .concept-box p:last-child { margin-bottom: 0; }
+
+  /* SCENARIO */
+  .scenario {
+    background: var(--highlight);
+    border: 1px solid #e8d99a;
+    border-left: 4px solid var(--gold);
+    padding: 1rem 1.2rem;
+    margin: 0.8rem 0;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    border-radius: 0 3px 3px 0;
+  }
+  .scenario strong { display: block; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--gold); margin-bottom: 0.3rem; }
+
+  /* PHRASE BOX */
+  .phrase-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.6rem;
+    margin: 0.8rem 0;
+  }
+  @media (max-width: 480px) { .phrase-col { grid-template-columns: 1fr; } }
+  .phrase {
+    background: white;
+    border: 1px solid var(--rule);
+    padding: 0.6rem 0.8rem;
+    font-size: 0.82rem;
+    line-height: 1.5;
+    border-radius: 3px;
+  }
+  .phrase em { display: block; color: var(--mid); font-size: 0.76rem; }
+
+  /* TEACHER NOTES */
+  .teacher-note {
+    background: #eef2ff;
+    border: 1px dashed #9ba8d4;
+    padding: 0.9rem 1.1rem;
+    margin: 1rem 0;
+    font-size: 0.83rem;
+    color: #3a4070;
+    border-radius: 3px;
+  }
+  .teacher-note strong { display: block; font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.3rem; color: #6878b8; }
+
+  ul, ol {
+    padding-left: 1.4rem;
+    margin: 0.5rem 0;
+    font-size: 0.92rem;
+    line-height: 1.8;
+  }
+
+  /* TIMER */
+  .timer-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    background: var(--ink);
+    padding: 0.6rem 1rem;
+    border-radius: 3px;
+    margin: 1rem 0;
+  }
+  .timer-display {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    color: var(--gold);
+    min-width: 3rem;
+  }
+  .timer-btn {
+    background: var(--rust);
+    border: none;
+    color: white;
+    padding: 0.3rem 0.8rem;
+    font-family: 'Source Serif 4', serif;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: background 0.15s;
+  }
+  .timer-btn:hover { background: #9a3d22; }
+  .timer-label { color: #aaa; font-size: 0.75rem; font-style: italic; }
+
+  /* PROGRESS */
+  .progress-dots {
+    display: flex;
+    gap: 0.4rem;
+    margin: 0.5rem 0 1.5rem;
+  }
+  .dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--rule);
+  }
+  .dot.done { background: var(--rust); }
+  .dot.current { background: var(--gold); }
+
+</style>
+</head>
+<body>
+
+<nav>
+  <button class="active" onclick="show('hook')">Hook</button>
+  <button onclick="show('concept')">Concept</button>
+  <button onclick="show('language')">Language</button>
+  <button onclick="show('discuss')">Discuss</button>
+  <button onclick="show('close')">Close</button>
+</nav>
+
+<section id="hook" class="active">
+  <div class="lesson-header">
+    <div class="kicker">Year 10 · Speaking + Discussion</div>
+    <h1>What Is a Right?</h1>
+    <div class="meta">20-minute lesson · Concept-first · Human Rights</div>
+  </div>
+
+  <div class="progress-dots">
+    <div class="dot current"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
+  </div>
+
+  <div class="section-label">Part 1 — Hook</div>
+  <h2>Rank It</h2>
+  <p class="timing">⏱ 4 minutes</p>
+
+  <p>Drag to rank these from <strong>most important</strong> (1) to <strong>least important</strong> (8). There is no correct answer — yet.</p>
+
+  <div class="rank-grid" id="rankGrid">
+    <div class="rank-item" draggable="true" data-id="a">
+      <span class="rank-handle">⠿</span>
+      <span class="rank-num">1</span>
+      <span>Access to clean drinking water</span>
+    </div>
+    <div class="rank-item" draggable="true" data-id="b">
+      <span class="rank-handle">⠿</span>
+      <span class="rank-num">2</span>
+      <span>The right to vote</span>
+    </div>
+    <div class="rank-item" draggable="true" data-id="c">
+      <span class="rank-handle">⠿</span>
+      <span class="rank-num">3</span>
+      <span>Freedom to say what you think</span>
+    </div>
+    <div class="rank-item" draggable="true" data-id="d">
+      <span class="rank-handle">⠿</span>
+      <span class="rank-num">4</span>
+      <span>Access to education</span>
+    </div>
+    <div class="rank-item" draggable="true" data-id="e">
+      <span class="rank-handle">⠿</span>
+      <span class="rank-num">5</span>
+      <span>Protection from torture</span>
+    </div>
+    <div class="rank-item" draggable="true" data-id="f">
+      <span class="rank-handle">⠿</span>
+      <span class="rank-num">6</span>
+      <span>The right to own a smartphone</span>
+    </div>
+    <div class="rank-item" draggable="true" data-id="g">
+      <span class="rank-handle">⠿</span>
+      <span class="rank-num">7</span>
+      <span>Freedom to practise your religion</span>
+    </div>
+    <div class="rank-item" draggable="true" data-id="h">
+      <span class="rank-handle">⠿</span>
+      <span class="rank-num">8</span>
+      <span>The right to be forgotten online</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <p><strong>Quick share:</strong> Compare with a partner. Where do you disagree? Why did you put that one first?</p>
+  </div>
+
+  <div class="teacher-note">
+    <strong>Teacher</strong>
+    The smartphone item tends to generate confident dismissal — push back: who decides what counts as essential? The "forgotten online" item surfaces privacy vs. accountability. Don't resolve the ranking — the disagreement IS the lesson.
+  </div>
+</section>
+
+<section id="concept">
+  <div class="lesson-header">
+    <div class="kicker">Year 10 · Speaking + Discussion</div>
+    <h1>What Is a Right?</h1>
+    <div class="meta">20-minute lesson · Human Rights</div>
+  </div>
+
+  <div class="progress-dots">
+    <div class="dot done"></div>
+    <div class="dot current"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
+  </div>
+
+  <div class="section-label">Part 2 — Concept</div>
+  <h2>Three Distinctions</h2>
+  <p class="timing">⏱ 5 minutes</p>
+
+  <p>Before we discuss <em>which</em> rights matter, we need to agree on what a <strong>right</strong> actually is.</p>
+
+  <div class="concept-box">
+    <h3>A right is not the same as…</h3>
+    <p><strong>A need</strong> — something your body or mind requires to survive. You need food. But having a need doesn't automatically mean anyone is obliged to provide it.</p>
+    <p><strong>A privilege</strong> — something you have because of where or who you were born. A privilege can be taken away. It depends on luck or status.</p>
+    <p><strong>A right</strong> — a claim that every person has simply because they are human. Not earned. Not given by a government. Not dependent on nationality.</p>
+  </div>
+
+  <h3>The hard question</h3>
+  <p>If rights belong to everyone, equally, by birth — then <em>who is responsible for protecting them?</em></p>
+
+  <div class="card gold">
+    <p>The Universal Declaration of Human Rights (1948) was written after the Holocaust and World War II. It tried to answer that question. But it was also written mostly by Western nations — countries that were, at that same moment, running empires in Africa and Asia.</p>
+  </div>
+
+  <div class="teacher-note">
+    <strong>Teacher</strong>
+    Drop this and wait. Don't fill the silence. This is the structural contradiction at the heart of international human rights — universal language, non-universal authorship. Students who push back ("but rights are still good") are doing exactly what you want. Ask: good for whom? Decided by whom?
+  </div>
+
+  <hr>
+
+  <h3>Quick check — pair task</h3>
+  <p>Look back at your ranking. Now sort each item into one column:</p>
+
+  <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:0.5rem; margin:0.8rem 0;">
+    <div class="card" style="border-left-color:#666; padding:0.7rem 0.8rem;">
+      <strong style="font-size:0.72rem;text-transform:uppercase;letter-spacing:0.1em;color:#666;">Need</strong>
+    </div>
+    <div class="card" style="border-left-color:var(--gold); padding:0.7rem 0.8rem;">
+      <strong style="font-size:0.72rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--gold);">Privilege</strong>
+    </div>
+    <div class="card" style="border-left-color:var(--rust); padding:0.7rem 0.8rem;">
+      <strong style="font-size:0.72rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--rust);">Right</strong>
+    </div>
+  </div>
+  <p style="font-size:0.85rem; color:var(--mid);">You will disagree. That's the point.</p>
+</section>
+
+<section id="language">
+  <div class="lesson-header">
+    <div class="kicker">Year 10 · Speaking + Discussion</div>
+    <h1>What Is a Right?</h1>
+    <div class="meta">20-minute lesson · Human Rights</div>
+  </div>
+
+  <div class="progress-dots">
+    <div class="dot done"></div>
+    <div class="dot done"></div>
+    <div class="dot current"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
+  </div>
+
+  <div class="section-label">Part 3 — Language</div>
+  <h2>How to Argue This in English</h2>
+  <p class="timing">⏱ 2 minutes</p>
+
+  <p>You'll need these phrases in the discussion. Read them once, then close the tab and try to use at least <strong>two</strong>.</p>
+
+  <h3>Claiming a position</h3>
+  <div class="phrase-col">
+    <div class="phrase">I would argue that…<em>gives your opinion formal weight</em></div>
+    <div class="phrase">The key issue here is…<em>redirects to what matters</em></div>
+    <div class="phrase">That's more of a privilege than a right because…<em>uses the concept</em></div>
+    <div class="phrase">You could say it's a need, but…<em>concedes, then qualifies</em></div>
+  </div>
+
+  <h3>Challenging politely</h3>
+  <div class="phrase-col">
+    <div class="phrase">I'm not sure that's quite right…<em>soft disagreement</em></div>
+    <div class="phrase">That depends on who you're asking.<em>introduces power / perspective</em></div>
+    <div class="phrase">But who decides that?<em>the structural question</em></div>
+    <div class="phrase">What about someone who doesn't have access to that?<em>shifts to the margins</em></div>
+  </div>
+
+  <h3>Stretch phrases</h3>
+  <div class="phrase-col">
+    <div class="phrase">The problem with that argument is that it assumes…<em>identifies a hidden assumption</em></div>
+    <div class="phrase">That's universally claimed but not universally enforced.<em>theory vs. practice</em></div>
+  </div>
+
+  <div class="card gold">
+    <p><strong>Note on register:</strong> In a real discussion or MUN context, you avoid "I think" — you argue. These phrases help you sound more formal without sounding robotic.</p>
+  </div>
+</section>
+
+<section id="discuss">
+  <div class="lesson-header">
+    <div class="kicker">Year 10 · Speaking + Discussion</div>
+    <h1>What Is a Right?</h1>
+    <div class="meta">20-minute lesson · Human Rights</div>
+  </div>
+
+  <div class="progress-dots">
+    <div class="dot done"></div>
+    <div class="dot done"></div>
+    <div class="dot done"></div>
+    <div class="dot current"></div>
+    <div class="dot"></div>
+  </div>
+
+  <div class="section-label">Part 4 — Discussion</div>
+  <h2>Structured Discussion</h2>
+  <p class="timing">⏱ 7 minutes — pairs or threes, then brief whole class</p>
+
+  <div class="timer-bar">
+    <span class="timer-display" id="timerDisplay">5:00</span>
+    <button class="timer-btn" onclick="startTimer()">Start</button>
+    <button class="timer-btn" onclick="resetTimer()" style="background:#555;">Reset</button>
+    <span class="timer-label">Pair discussion</span>
+  </div>
+
+  <p>Choose <strong>one scenario</strong> to discuss. Argue your position using the phrases from Part 3.</p>
+
+  <div class="q-grid">
+
+    <div class="q-card">
+      <span class="q-num">A</span>
+      <div class="q-level">Scenario A — Accessible</div>
+      <p>A government says: <em>"You have the right to vote — but only if you pass a literacy test."</em><br>Is this still a right? Why / why not?</p>
+    </div>
+
+    <div class="q-card">
+      <span class="q-num">B</span>
+      <div class="q-level">Scenario B — Core</div>
+      <p>Some countries say access to the internet is a basic right. Others say it's a luxury. Who gets to make that decision — and does it matter who is making it?</p>
+    </div>
+
+    <div class="q-card">
+      <span class="q-num">C</span>
+      <div class="q-level">Scenario C — Stretch</div>
+      <p>The nations that wrote the Universal Declaration of Human Rights in 1948 were also controlling colonies at that time. Does that affect whether we should trust the document? Or do rights belong to everyone regardless of who wrote them down?</p>
+    </div>
+
+  </div>
+
+  <div class="teacher-note">
+    <strong>Teacher</strong>
+    Scenario A surfaces historical use of "neutral" criteria to exclude (US literacy tests, 1870–1965). Scenario B opens the digital divide. Scenario C is the structural one — push students who engage with it: can a document be both useful and tainted? Most Year 10 students can hold that tension if you give them permission to.
+  </div>
+
+  <hr>
+
+  <h3>Whole-class pull (2 mins)</h3>
+  <p>Ask each group: <em>What was the hardest thing to agree on, and why?</em></p>
+  <p>Don't resolve it. Just surface the disagreement.</p>
+</section>
+
+<section id="close">
+  <div class="lesson-header">
+    <div class="kicker">Year 10 · Speaking + Discussion</div>
+    <h1>What Is a Right?</h1>
+    <div class="meta">20-minute lesson · Human Rights</div>
+  </div>
+
+  <div class="progress-dots">
+    <div class="dot done"></div>
+    <div class="dot done"></div>
+    <div class="dot done"></div>
+    <div class="dot done"></div>
+    <div class="dot current"></div>
+  </div>
+
+  <div class="section-label">Part 5 — Close</div>
+  <h2>One Question Out</h2>
+  <p class="timing">⏱ 2 minutes</p>
+
+  <div class="concept-box">
+    <h3>Exit question — no right answer required</h3>
+    <p>If rights are universal — belonging to every human, everywhere — but most of the world lacks the power to enforce them, what does that tell us about where power actually sits?</p>
+  </div>
+
+  <p>Students write <strong>one sentence</strong> in response — or say it aloud as they leave.</p>
+
+  <hr>
+
+  <h3>Lesson summary</h3>
+  <div class="card ink">
+    <ul>
+      <li>Rights ≠ needs ≠ privileges — but the lines are contested</li>
+      <li>Universal claims were made by non-universal voices</li>
+      <li>The question <em>who decides?</em> is always a power question</li>
+    </ul>
+  </div>
+
+  <hr>
+
+  <h3>Vocabulary recap</h3>
+  <table class="vocab-table">
+    <thead>
+      <tr><th>Word / Phrase</th><th>Meaning</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>human right</td><td>a claim belonging to every person by birth, not by law or luck</td></tr>
+      <tr><td>universal</td><td>applying to all people in all places</td></tr>
+      <tr><td>privilege</td><td>an advantage linked to birth, wealth, or status</td></tr>
+      <tr><td>enforce</td><td>to make sure a law or rule is actually followed</td></tr>
+      <tr><td>sovereign</td><td>having full, independent authority over a territory</td></tr>
+      <tr><td>obligation</td><td>something you are required to do, a duty</td></tr>
+    </tbody>
+  </table>
+
+  <div class="teacher-note">
+    <strong>Extension / next lesson</strong>
+    Natural follow-up: the UDHR Articles themselves (pick 3–4), or a case study where a right was claimed but not enforced. Also strong for MUN prep — the vocabulary of rights, obligations, and sovereignty maps directly to resolution language.
+  </div>
+
+</section>
+
+<script>
+  // NAV
+  function show(id) {
+    document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    event.target.classList.add('active');
+  }
+
+  // DRAG TO RANK
+  let dragSrc = null;
+  const grid = document.getElementById('rankGrid');
+  function updateNums() {
+    grid.querySelectorAll('.rank-item').forEach((el, i) => {
+      el.querySelector('.rank-num').textContent = i + 1;
+    });
+  }
+  grid.querySelectorAll('.rank-item').forEach(item => {
+    item.addEventListener('dragstart', e => {
+      dragSrc = item;
+      setTimeout(() => item.classList.add('dragging'), 0);
+    });
+    item.addEventListener('dragend', () => {
+      item.classList.remove('dragging');
+      grid.querySelectorAll('.rank-item').forEach(i => i.classList.remove('drag-over'));
+      updateNums();
+    });
+    item.addEventListener('dragover', e => {
+      e.preventDefault();
+      grid.querySelectorAll('.rank-item').forEach(i => i.classList.remove('drag-over'));
+      item.classList.add('drag-over');
+    });
+    item.addEventListener('drop', e => {
+      e.preventDefault();
+      if (dragSrc !== item) {
+        const items = [...grid.querySelectorAll('.rank-item')];
+        const srcIdx = items.indexOf(dragSrc);
+        const tgtIdx = items.indexOf(item);
+        if (srcIdx < tgtIdx) grid.insertBefore(dragSrc, item.nextSibling);
+        else grid.insertBefore(dragSrc, item);
+      }
+    });
+  });
+
+  // TIMER
+  let timerInterval = null;
+  let timerSeconds = 300;
+  function fmt(s) {
+    const m = Math.floor(s/60);
+    const sec = s%60;
+    return `${m}:${sec.toString().padStart(2,'0')}`;
+  }
+  function startTimer() {
+    if (timerInterval) return;
+    timerInterval = setInterval(() => {
+      timerSeconds--;
+      document.getElementById('timerDisplay').textContent = fmt(timerSeconds);
+      if (timerSeconds <= 0) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+        document.getElementById('timerDisplay').textContent = '⏰';
+      }
+    }, 1000);
+  }
+  function resetTimer() {
+    clearInterval(timerInterval);
+    timerInterval = null;
+    timerSeconds = 300;
+    document.getElementById('timerDisplay').textContent = '5:00';
+  }
+</script>
+</body>
+</html>
