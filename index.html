@@ -2,233 +2,709 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>Human Rights — Not Optional</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Playfair+Display:ital@1&display=swap" rel="stylesheet">
-
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
 <style>
-html{
-    scroll-behavior:smooth;
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#e8e2d9;
+  --paper:#111110;
+  --red:#e02020;
+  --red-b:#ff3333;
+  --dim:#6e6860;
+  --dim2:#8a837a;
+  --line:rgba(232,226,217,0.10);
+  --line2:rgba(232,226,217,0.18);
+  --serif:'DM Serif Display',serif;
+  --mono:'DM Mono',monospace;
+  --sans:'Syne',sans-serif;
+  --card:#161614;
+  --card2:#1c1b19;
 }
-
+html{scroll-behavior:smooth;font-size:16px}
 body{
-    margin:0;
-    font-family:'Inter', sans-serif;
-    background:#0a0a0a;
-    color:#f5f5f5;
-    scroll-snap-type:y proximity;
+  background:var(--paper);
+  color:var(--ink);
+  font-family:var(--sans);
+  scroll-snap-type:y mandatory;
+  overflow-y:scroll;
+  height:100dvh;
 }
-
-/* SLIDES */
 .slide{
-    min-height:100dvh;
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
-    align-items:center;
-    padding:60px;
-    box-sizing:border-box;
-    text-align:center;
-    scroll-snap-align:start;
-    scroll-snap-stop:always;
+  min-height:100dvh;
+  display:flex;flex-direction:column;justify-content:center;
+  padding:clamp(36px,7vw,90px) clamp(24px,7vw,110px);
+  scroll-snap-align:start;
+  scroll-snap-stop:normal;
+  position:relative;overflow:hidden;
 }
+.slide--center{align-items:center;text-align:center}
+.slide--right{align-items:flex-end;text-align:right}
+.eyebrow{font-family:var(--mono);font-size:0.68rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--dim);margin-bottom:1.3rem}
+h1{font-family:var(--serif);font-size:clamp(2.8rem,8vw,6.5rem);line-height:1.0;font-weight:400;max-width:14ch;margin-bottom:1.2rem}
+h2{font-family:var(--serif);font-size:clamp(1.8rem,4.5vw,3.6rem);line-height:1.1;font-weight:400;max-width:22ch;margin-bottom:1rem}
+p{font-size:clamp(0.95rem,1.7vw,1.15rem);line-height:1.65;max-width:68ch;color:var(--ink);opacity:0.88}
+p+p{margin-top:0.8rem}
+.big-p{font-family:var(--serif);font-size:clamp(1.3rem,2.8vw,2rem);font-style:italic;line-height:1.4;max-width:26ch;opacity:0.6}
+.red{color:var(--red);font-style:normal}
+.small{font-size:0.75rem;font-family:var(--mono);letter-spacing:0.06em;color:var(--dim);margin-top:0.8rem}
+.pull{font-family:var(--serif);font-size:clamp(1.4rem,2.8vw,2.2rem);font-style:italic;line-height:1.3;border-left:2px solid var(--red);padding-left:1.4rem;margin:1.4rem 0;max-width:28ch;color:var(--ink)}
+.bg-number{position:absolute;right:-0.05em;top:-0.15em;font-family:var(--serif);font-size:clamp(10rem,28vw,20rem);line-height:1;opacity:0.03;pointer-events:none;user-select:none;font-style:italic}
+.progress{position:fixed;top:0;left:0;right:0;height:3px;background:var(--line);z-index:100}
+.progress-bar{height:100%;background:var(--red);width:0%;transition:width 0.15s linear}
+.scroll-hint{position:absolute;bottom:1.8rem;left:50%;transform:translateX(-50%);font-family:var(--mono);font-size:0.62rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--dim);animation:bob 2.2s ease-in-out infinite}
+@keyframes bob{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(4px)}}
+.columns{display:grid;grid-template-columns:1fr 1fr;gap:clamp(1.2rem,3.5vw,3.5rem);max-width:860px;margin-top:1.4rem}
+@media(max-width:600px){.columns{grid-template-columns:1fr}}
+.col-label{font-family:var(--mono);font-size:0.62rem;letter-spacing:0.16em;text-transform:uppercase;color:var(--dim);border-top:1px solid var(--line2);padding-top:0.8rem;margin-bottom:0.7rem}
 
-/* TYPOGRAPHY */
-h1{
-    font-size:3.2rem;
-    font-weight:800;
-    margin-bottom:20px;
-}
+/* PROGRESS DOTS */
+.slide-dots{position:fixed;right:1.4rem;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:6px;z-index:99}
+.dot{width:5px;height:5px;border-radius:50%;background:var(--dim);transition:all 0.3s;cursor:pointer}
+.dot.active{background:var(--red);transform:scale(1.5)}
+.dot.done{background:var(--dim2)}
 
-h2{
-    font-size:2.2rem;
-    font-weight:600;
-    margin-bottom:20px;
+/* REVEAL MECHANIC */
+.reveal-block{margin-top:1.6rem;max-width:720px}
+.reveal-item{border:1px solid var(--line);border-radius:3px;margin-bottom:0.5rem;overflow:hidden}
+.reveal-trigger{
+  width:100%;background:var(--card);border:none;color:var(--ink);
+  font-family:var(--sans);font-size:0.9rem;font-weight:700;
+  padding:1rem 1.2rem;cursor:pointer;text-align:left;
+  display:flex;justify-content:space-between;align-items:center;
+  transition:background 0.18s;
 }
+.reveal-trigger:hover,.reveal-trigger.open{background:var(--card2)}
+.reveal-trigger .arrow{font-size:0.75rem;color:var(--dim);transition:transform 0.2s;font-family:var(--mono)}
+.reveal-trigger.open .arrow{transform:rotate(90deg);color:var(--red)}
+.reveal-content{display:none;padding:1rem 1.2rem 1.2rem;background:var(--card);border-top:1px solid var(--line)}
+.reveal-content.open{display:block}
+.reveal-meta{font-family:var(--mono);font-size:0.62rem;letter-spacing:0.14em;color:var(--dim);margin-bottom:0.5rem}
+.reveal-body{font-size:0.85rem;line-height:1.6;color:var(--dim2);margin-bottom:0.8rem}
+.reveal-verdict{font-family:var(--mono);font-size:0.65rem;letter-spacing:0.1em;color:var(--red);margin-bottom:1rem}
 
-p{
-    font-size:1.2rem;
-    max-width:800px;
-    line-height:1.6;
-    opacity:0.9;
-    margin:6px 0;
+/* THE STING — privilege prompt */
+.sting{
+  background:rgba(224,32,32,0.08);
+  border:1px solid rgba(224,32,32,0.25);
+  border-radius:3px;
+  padding:0.8rem 1rem;
+  margin-top:0.8rem;
 }
+.sting-label{font-family:var(--mono);font-size:0.6rem;letter-spacing:0.16em;text-transform:uppercase;color:var(--red);margin-bottom:0.4rem}
+.sting-q{font-size:0.85rem;font-style:italic;color:var(--ink);opacity:0.9;line-height:1.5}
 
-.quote{
-    font-family:'Playfair Display', serif;
-    font-style:italic;
-    font-size:2rem;
+/* TYPED RESPONSE */
+.response-block{margin-top:1.2rem;max-width:640px;width:100%}
+.response-label{font-family:var(--mono);font-size:0.62rem;letter-spacing:0.16em;text-transform:uppercase;color:var(--dim);margin-bottom:0.5rem}
+.response-field{
+  width:100%;background:var(--card);border:1px solid var(--line2);
+  color:var(--ink);font-family:var(--sans);font-size:0.95rem;
+  line-height:1.6;padding:0.9rem 1rem;resize:none;
+  border-radius:3px;min-height:80px;
+  transition:border-color 0.2s;
 }
+.response-field:focus{outline:none;border-color:rgba(224,32,32,0.5)}
+.response-field::placeholder{color:var(--dim)}
+.response-saved{font-family:var(--mono);font-size:0.6rem;letter-spacing:0.1em;color:var(--dim);margin-top:0.4rem;opacity:0;transition:opacity 0.4s}
+.response-saved.show{opacity:1}
 
-.highlight{
-    color:#ff4d4d;
-    font-weight:600;
+/* CHOICE / POLLING */
+.choice-row{display:flex;flex-wrap:wrap;gap:0.7rem;margin-top:1.5rem;max-width:680px}
+.choice-btn{
+  font-family:var(--sans);font-weight:700;font-size:0.88rem;
+  border:1.5px solid var(--line2);background:transparent;color:var(--ink);
+  padding:0.75rem 1.3rem;cursor:pointer;transition:all 0.18s;border-radius:2px;
 }
+.choice-btn:hover{background:rgba(232,226,217,0.06);border-color:var(--dim2)}
+.choice-btn.chosen{background:var(--red);border-color:var(--red);color:#fff;font-size:1rem;padding:0.9rem 1.6rem}
+.chosen-display{
+  margin-top:1.4rem;font-family:var(--serif);font-style:italic;
+  font-size:clamp(1.8rem,4vw,3rem);color:var(--red);
+  display:none;max-width:18ch;line-height:1.2;
+}
+.chosen-display.show{display:block}
 
-.box{
-    border:1px solid rgba(255,255,255,0.2);
-    padding:20px;
-    margin:10px;
-    border-radius:12px;
-    min-width:180px;
-    transition:all 0.25s ease;
-}
+/* CASCADE CONSEQUENCE */
+.consequence{display:none;margin-top:1.2rem;max-width:640px;border-left:2px solid var(--red);padding-left:1.1rem}
+.consequence.show{display:block}
+.c-head{font-weight:700;font-size:0.9rem;color:var(--red);margin-bottom:0.4rem}
+.c-body{font-size:0.85rem;line-height:1.6;color:var(--dim2);margin-bottom:0.5rem}
+.c-cascade{font-size:0.75rem;font-family:var(--mono);color:var(--dim);letter-spacing:0.04em}
 
-.box:hover,
-.box:active{
-    border-color:#ff4d4d;
-    transform:translateY(-3px);
-}
+/* ENFORCER GRID */
+.enforcer-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);margin-top:1.5rem;max-width:860px}
+.enforcer-box{background:var(--card);padding:1.3rem 1.5rem}
+.enforcer-name{font-weight:700;font-size:0.88rem;margin-bottom:0.4rem}
+.enforcer-body{font-size:0.8rem;line-height:1.55;color:var(--dim2);margin-bottom:0.6rem}
+.enforcer-verdict{font-family:var(--mono);font-size:0.63rem;letter-spacing:0.1em}
+.v-blocked{color:var(--red-b)}
+.v-weak{color:#fb923c}
+.v-limited{color:#60a5fa}
 
-.flex{
-    display:flex;
-    gap:20px;
-    flex-wrap:wrap;
-    justify-content:center;
-}
+/* ARTICLE GRID */
+.article-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);margin-top:1.8rem;width:100%;max-width:860px}
+.article-box{background:var(--card);padding:1.3rem 1.5rem;cursor:pointer;transition:background 0.2s;position:relative}
+.article-box:hover,.article-box.tapped{background:var(--card2)}
+.article-box.tapped{border-bottom:2px solid var(--red)}
+.article-num{font-family:var(--mono);font-size:0.62rem;letter-spacing:0.16em;color:var(--dim);margin-bottom:0.4rem}
+.article-title{font-family:var(--sans);font-weight:700;font-size:0.88rem;margin-bottom:0.3rem}
+.article-body{font-size:0.78rem;line-height:1.5;color:var(--dim2)}
+.article-q{font-size:0.75rem;font-style:italic;color:var(--red);margin-top:0.5rem;display:none}
+.article-box.tapped .article-q{display:block}
 
-.small{
-    font-size:0.9rem;
-    opacity:0.6;
+/* VOTE BAR */
+.vote-section{margin-top:1.6rem;max-width:600px;width:100%}
+.vote-q{font-family:var(--sans);font-weight:700;font-size:1rem;margin-bottom:1rem;color:var(--ink)}
+.vote-opts{display:flex;flex-direction:column;gap:0.5rem}
+.vote-btn{
+  background:var(--card);border:1px solid var(--line2);color:var(--ink);
+  font-family:var(--sans);font-size:0.88rem;padding:0.8rem 1rem;
+  cursor:pointer;border-radius:3px;text-align:left;transition:all 0.18s;
+  display:flex;align-items:center;justify-content:space-between;
 }
+.vote-btn:hover{background:var(--card2)}
+.vote-btn.voted{border-color:var(--red);color:var(--red)}
+.vote-bar-wrap{width:120px;height:4px;background:var(--line);border-radius:2px;overflow:hidden}
+.vote-bar-fill{height:100%;background:var(--red);width:0%;transition:width 0.4s ease;border-radius:2px}
+.vote-note{font-family:var(--mono);font-size:0.6rem;letter-spacing:0.1em;color:var(--dim);margin-top:0.6rem}
 
-/* ANIMATION */
-.fade{
-    opacity:0;
-    transform:translateY(20px);
-    transition:all 0.5s ease;
-}
+/* FADE IN */
+.fade{opacity:0;transform:translateY(16px);transition:opacity 0.55s ease,transform 0.55s ease}
+.fade.vis{opacity:1;transform:translateY(0)}
+.fd1{transition-delay:0.1s}.fd2{transition-delay:0.2s}.fd3{transition-delay:0.3s}
 
-.fade.visible{
-    opacity:1;
-    transform:translateY(0);
-}
-
-/* MOBILE */
-@media (max-width:600px){
-    h1{font-size:2.4rem;}
-    h2{font-size:1.6rem;}
-    p{font-size:1rem;}
-}
+/* FINAL ECHO */
+.echo-line{font-family:var(--serif);font-style:italic;font-size:clamp(1rem,2vw,1.4rem);opacity:0.35;margin-bottom:0.4rem;transition:opacity 0.4s}
+.echo-line.lit{opacity:1;color:var(--red)}
 </style>
 </head>
-
 <body>
 
-<!-- 1 -->
-<div class="slide">
-    <h1>Human Rights</h1>
-    <p class="quote">“You are born with them.<br>Until someone stronger decides you’re not.”</p>
-    <p class="small">Scroll ↓</p>
+<div class="progress"><div class="progress-bar" id="bar"></div></div>
+<div class="slide-dots" id="dots"></div>
+
+<!-- ═══════════════════════════════════════════
+     1 — TITLE
+════════════════════════════════════════════ -->
+<div class="slide slide--center" style="background:radial-gradient(ellipse 80% 60% at 50% 60%,rgba(180,10,10,0.2) 0%,transparent 70%)">
+  <div class="bg-number">1</div>
+  <p class="eyebrow">Human Rights — Not Optional · DSP Year 10</p>
+  <h1>You are born with them.</h1>
+  <p class="big-p" style="margin-top:1rem">Until someone stronger<br>decides you're not.</p>
+  <div class="scroll-hint">↓ scroll</div>
 </div>
 
-<!-- 2 -->
+<!-- ═══════════════════════════════════════════
+     2 — OPENING QUESTION + FIRST RESPONSE
+════════════════════════════════════════════ -->
 <div class="slide fade">
-    <h2>Answer this.</h2>
-    <p>Your government takes away your freedom.</p>
-    <p class="highlight">Who decides if that’s illegal?</p>
+  <div class="bg-number">2</div>
+  <p class="eyebrow">Before we start</p>
+  <h2>Your government locks you up. <span class="red">Who decides if that's legal?</span></h2>
+  <p style="margin-top:0.8rem">Not a hypothetical. Happening right now, in multiple countries. Hold that question — we'll come back to it.</p>
+  <div class="response-block fade fd1">
+    <div class="response-label">Your instinct — one sentence</div>
+    <textarea class="response-field" placeholder="Who do you think should be able to stop a government doing this?" data-key="q2" rows="2"></textarea>
+    <div class="response-saved" id="saved-q2">saved ✓</div>
+  </div>
 </div>
 
-<!-- 3 -->
+<!-- ═══════════════════════════════════════════
+     3 — 1948 CONTEXT
+════════════════════════════════════════════ -->
 <div class="slide fade">
-    <h2>1948</h2>
-    <p>After World War II, the world faced one question:</p>
-    <p class="quote">How do you stop power from abusing people?</p>
-</div>
-
-<!-- 4 -->
-<div class="slide fade">
-    <p class="quote">“Everyone has rights.”</p>
-    <p class="small">That was the claim.</p>
-</div>
-
-<!-- 5 -->
-<div class="slide fade">
-    <h2>Do you believe this?</h2>
-    <div class="flex">
-        <div class="box">All humans have the same rights</div>
-        <div class="box">Rights cannot be taken away</div>
-        <div class="box">Everyone is treated equally</div>
+  <div class="bg-number">3</div>
+  <p class="eyebrow">Where this comes from</p>
+  <h2>1948. The world had just watched states murder millions of their own people — legally.</h2>
+  <div class="columns fade fd1">
+    <div>
+      <div class="col-label">The context nobody mentions</div>
+      <p style="font-size:0.88rem;line-height:1.6">The UDHR was drafted as Europe recovered from genocide. Meanwhile the US had legal racial segregation. The UK still controlled Kenya, Malaya, and much of the Caribbean. France was suppressing Algeria. The Soviet Union was running gulags. The countries writing "universal rights" were simultaneously violating them — often in colonies whose people had no vote on the document.</p>
     </div>
-</div>
-
-<!-- 6 -->
-<div class="slide fade">
-    <h2>So what are these “rights”… really?</h2>
-    <div class="flex">
-        <div class="box">Freedom of speech</div>
-        <div class="box">Education</div>
-        <div class="box">No torture</div>
-        <div class="box">A fair trial</div>
+    <div>
+      <div class="col-label">Who was in the room — and who wasn't</div>
+      <p style="font-size:0.88rem;line-height:1.6">Eleanor Roosevelt chaired the drafting committee. Hansa Mehta from India pushed to change "all men are created equal" to "all human beings." Charles Malik represented Lebanon. But Kenya was a British colony. Algeria was French. Most of sub-Saharan Africa, Southeast Asia, and the Caribbean had no seat. The document claimed to speak for all humanity. It was written by about a third of it.</p>
     </div>
+  </div>
+  <div class="vote-section fade fd2">
+    <div class="vote-q">Does it matter who wrote the document?</div>
+    <div class="vote-opts">
+      <button class="vote-btn" onclick="vote(this,'v3','yes')">Yes — authorship shapes what gets protected <div class="vote-bar-wrap"><div class="vote-bar-fill" id="vb3-yes"></div></div></button>
+      <button class="vote-btn" onclick="vote(this,'v3','no')">No — the content is what matters, not who wrote it <div class="vote-bar-wrap"><div class="vote-bar-fill" id="vb3-no"></div></div></button>
+      <button class="vote-btn" onclick="vote(this,'v3','unsure')">Unsure <div class="vote-bar-wrap"><div class="vote-bar-fill" id="vb3-unsure"></div></div></button>
+    </div>
+    <div class="vote-note">tap to answer · show your screen to the class</div>
+  </div>
 </div>
 
-<!-- 7 -->
+<!-- ═══════════════════════════════════════════
+     4 — THE UDHR — tap to reveal
+════════════════════════════════════════════ -->
 <div class="slide fade">
-    <h2>Now be honest.</h2>
-    <p>These rights exist…</p>
-    <p class="highlight">Do they actually exist in reality?</p>
+  <div class="bg-number">4</div>
+  <p class="eyebrow">The Universal Declaration of Human Rights, 1948 — tap each article</p>
+  <h2>So what did they actually write?</h2>
+  <div class="article-grid fade fd1">
+    <div class="article-box" onclick="tapArticle(this)">
+      <div class="article-num">ART. 3</div>
+      <div class="article-title">Right to life, liberty, security</div>
+      <div class="article-body">Everyone has the right to life, liberty and security of person.</div>
+      <div class="article-q">Your country executes people for drug offences. Is that a violation — or a sovereign choice?</div>
+    </div>
+    <div class="article-box" onclick="tapArticle(this)">
+      <div class="article-num">ART. 5</div>
+      <div class="article-title">No torture</div>
+      <div class="article-body">No one shall be subjected to torture or to cruel, inhuman or degrading treatment or punishment.</div>
+      <div class="article-q">The US legally authorised waterboarding after 9/11. The officials who signed off are not in prison. Why not?</div>
+    </div>
+    <div class="article-box" onclick="tapArticle(this)">
+      <div class="article-num">ART. 9</div>
+      <div class="article-title">No arbitrary detention</div>
+      <div class="article-body">No one shall be subjected to arbitrary arrest, detention or exile.</div>
+      <div class="article-q">Guantánamo has held people for 20+ years without trial. It is still open. Who is responsible for closing it?</div>
+    </div>
+    <div class="article-box" onclick="tapArticle(this)">
+      <div class="article-num">ART. 12</div>
+      <div class="article-title">Privacy</div>
+      <div class="article-body">No one shall be subjected to arbitrary interference with their privacy, family, home or correspondence.</div>
+      <div class="article-q">Your phone tracks your location. Your government can request that data. You agreed to this in a terms of service. Was that a free choice?</div>
+    </div>
+    <div class="article-box" onclick="tapArticle(this)">
+      <div class="article-num">ART. 19</div>
+      <div class="article-title">Freedom of expression</div>
+      <div class="article-body">Everyone has the right to freedom of opinion and expression, including to seek, receive and impart information through any media.</div>
+      <div class="article-q">China blocks this page. If you studied there instead of here, you wouldn't be reading this. What did you do to deserve access to it?</div>
+    </div>
+    <div class="article-box" onclick="tapArticle(this)">
+      <div class="article-num">ART. 26</div>
+      <div class="article-title">Right to education</div>
+      <div class="article-body">Everyone has the right to education. It shall be directed to the full development of the human personality.</div>
+      <div class="article-q">You attend a fee-paying school. The right says "everyone." What does your presence here say about how that right is actually distributed?</div>
+    </div>
+  </div>
+  <p class="small fade fd2">tap an article to reveal what it actually means for you</p>
 </div>
 
-<!-- 8 (KEY MOMENT WITH SLIGHT DELAY) -->
-<div class="slide fade" style="transition-delay:0.15s;">
-    <p>A government passes a law.</p>
-    <p>Some people can be executed.</p>
-    <p>Others cannot.</p>
-
-    <p class="highlight">And it’s legal.</p>
-
-    <br>
-
-    <p class="highlight">Is that justice… or power?</p>
-</div>
-
-<!-- PAUSE: 5 seconds -->
-
-<!-- 9 -->
-<div class="slide fade" style="align-items:flex-start; text-align:left;">
-    <p class="quote">“So what actually stops this?”</p>
-</div>
-
-<!-- 10 -->
+<!-- ═══════════════════════════════════════════
+     5 — THE ENFORCEMENT GAP
+════════════════════════════════════════════ -->
 <div class="slide fade">
-    <h2>You decide.</h2>
-    <p>A government can remove ONE right to keep control.</p>
-    <p class="small">No talking. Decide alone.</p>
+  <div class="bg-number">5</div>
+  <p class="eyebrow">The enforcement gap</p>
+  <h2>The document is real. <span class="red">The enforcement is not.</span></h2>
+  <div class="columns fade fd1">
+    <div>
+      <div class="col-label">What the UDHR is</div>
+      <p style="font-size:0.88rem;line-height:1.6">A declaration — not a treaty. There is no world court with jurisdiction over all states. No world police. When a state violates human rights, the question "who stops it?" has no automatic answer. The UDHR is a statement of aspiration backed by moral pressure. That pressure works only when powerful states want it to.</p>
+    </div>
+    <div>
+      <div class="col-label">What came after</div>
+      <p style="font-size:0.88rem;line-height:1.6">Later instruments tried to add teeth: the International Covenant on Civil and Political Rights (1966), the Convention Against Torture (1984), the International Criminal Court (2002). Each created mechanisms. But mechanisms only function when states cooperate — and states cooperate when it costs them nothing not to, or when powerful allies pressure them into it.</p>
+    </div>
+  </div>
+  <div class="pull fade fd2">Rights without enforcement are a list of things states agreed to feel bad about ignoring.</div>
+  <div class="response-block fade fd3">
+    <div class="response-label">What would actually make this work?</div>
+    <textarea class="response-field" placeholder="If you were redesigning the system from scratch — what would you add?" data-key="q5" rows="2"></textarea>
+    <div class="response-saved" id="saved-q5">saved ✓</div>
+  </div>
+</div>
 
-    <div class="flex">
-        <div class="box">Freedom of speech</div>
-        <div class="box">Privacy</div>
-        <div class="box">Fair trial</div>
-        <div class="box">Education</div>
+<!-- ═══════════════════════════════════════════
+     6 — LIVE CASES — tap to expand
+════════════════════════════════════════════ -->
+<div class="slide fade">
+  <div class="bg-number">6</div>
+  <p class="eyebrow">Not hypothetical — documented, current, ongoing</p>
+  <h2>These are happening <span class="red">right now.</span></h2>
+  <div class="reveal-block fade fd1">
+
+    <div class="reveal-item">
+      <button class="reveal-trigger" onclick="toggleReveal(this)">
+        <span>China — Xinjiang</span><span class="arrow">▶</span>
+      </button>
+      <div class="reveal-content">
+        <div class="reveal-meta">ART. 5 · ART. 9 · ART. 18 · ART. 20</div>
+        <div class="reveal-body">Over a million Uyghur Muslims held in facilities the Chinese government calls "vocational training centres." Forced renunciation of religion documented by UN investigators, satellite imagery, and leaked internal documents. China sits on the UN Security Council. Any binding resolution can be vetoed before it starts.</div>
+        <div class="reveal-verdict">↯ No binding UN response possible while China holds its veto</div>
+        <div class="sting">
+          <div class="sting-label">For you, specifically</div>
+          <div class="sting-q">Your family buys products made in Xinjiang supply chains. Your phone almost certainly contains components from the region. At what point does consumption become complicity?</div>
+        </div>
+      </div>
     </div>
 
-    <h2 class="highlight">Which one do you remove?</h2>
-    <p class="small">Write one sentence.</p>
+    <div class="reveal-item">
+      <button class="reveal-trigger" onclick="toggleReveal(this)">
+        <span>Russia — Ukraine</span><span class="arrow">▶</span>
+      </button>
+      <div class="reveal-content">
+        <div class="reveal-meta">ART. 3 · ART. 5 · ART. 9</div>
+        <div class="reveal-body">The ICC issued an arrest warrant for Putin in March 2023 for the unlawful deportation of Ukrainian children. He has since travelled to South Africa (an ICC signatory), Mongolia (an ICC signatory), and other states. None arrested him. South Africa cited diplomatic necessity. Mongolia cited trade relations.</div>
+        <div class="reveal-verdict">↯ Warrant exists on paper. Enforcement requires political will no state is willing to spend.</div>
+        <div class="sting">
+          <div class="sting-label">For you, specifically</div>
+          <div class="sting-q">European countries that host Putin — or trade with Russia — are making a calculation that economic interest outweighs accountability. Your country is in Europe. Your family pays taxes that fund that foreign policy. Is that your responsibility?</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="reveal-item">
+      <button class="reveal-trigger" onclick="toggleReveal(this)">
+        <span>United States — Guantánamo</span><span class="arrow">▶</span>
+      </button>
+      <div class="reveal-content">
+        <div class="reveal-meta">ART. 5 · ART. 9 · ART. 10</div>
+        <div class="reveal-body">Open since 2001. Detention without trial, some detainees held for over 20 years never charged. Waterboarding — classified as torture under international law — legally authorised internally. The US has not ratified the ICC. It publishes annual reports criticising other nations' human rights records. The word for that is impunity.</div>
+        <div class="reveal-verdict">↯ Self-exemption: the world's loudest human rights critic is also a documented violator</div>
+        <div class="sting">
+          <div class="sting-label">For you, specifically</div>
+          <div class="sting-q">If you're planning to study in the US — and many of you are — you are choosing to build your future in a country that holds this position. Does that factor into your plans? Should it?</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="reveal-item">
+      <button class="reveal-trigger" onclick="toggleReveal(this)">
+        <span>Saudi Arabia — Khashoggi</span><span class="arrow">▶</span>
+      </button>
+      <div class="reveal-content">
+        <div class="reveal-meta">ART. 3 · ART. 19</div>
+        <div class="reveal-body">Jamal Khashoggi, a journalist and Washington Post contributor, was murdered inside the Saudi consulate in Istanbul in October 2018. A UN Special Rapporteur concluded it was a "premeditated extrajudicial killing" ordered by Crown Prince Mohammed bin Salman. He attended the G20 in 2022. He met with Western heads of state in 2023 and 2024. He controls oil.</div>
+        <div class="reveal-verdict">↯ No accountability. Oil and arms contracts were judged more important.</div>
+        <div class="sting">
+          <div class="sting-label">For you, specifically</div>
+          <div class="sting-q">Your family may holiday in destinations that are possible because of cheap oil. European governments chose arms sales over accountability. At what point do economic decisions made by your society become decisions you own?</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="reveal-item">
+      <button class="reveal-trigger" onclick="toggleReveal(this)">
+        <span>Israel — Gaza</span><span class="arrow">▶</span>
+      </button>
+      <div class="reveal-content">
+        <div class="reveal-meta">ART. 3 · ART. 5 · ART. 25</div>
+        <div class="reveal-body">South Africa brought a case under the Genocide Convention at the ICJ in January 2024. The Court ordered provisional measures — Israel to prevent acts that could constitute genocide and to allow humanitarian aid. The conditions documented by UN agencies continued. The US vetoed three Security Council ceasefire resolutions in 2024. The case continues. So does the situation.</div>
+        <div class="reveal-verdict">↯ Court ordered. Veto blocked. Conditions continued.</div>
+        <div class="sting">
+          <div class="sting-label">For you, specifically</div>
+          <div class="sting-q">The EU receives significant US political and military backing. European governments have taken different positions — some called for ceasefire, some did not. You live in Europe. You will vote in European elections. This is a policy question you will one day have a voice in. What will you do with it?</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="reveal-item">
+      <button class="reveal-trigger" onclick="toggleReveal(this)">
+        <span>Myanmar — Rohingya</span><span class="arrow">▶</span>
+      </button>
+      <div class="reveal-content">
+        <div class="reveal-meta">ART. 3 · ART. 5 · ART. 15</div>
+        <div class="reveal-body">The UN's own fact-finding mission concluded in 2018 that Myanmar's military had committed genocide against the Rohingya. ICJ proceedings began in 2019. Myanmar has ignored interim rulings. The military staged a coup in 2021. Thousands detained, tortured, killed. The international response has been condemnations and targeted sanctions. The genocide finding stands. The military governs.</div>
+        <div class="reveal-verdict">↯ Court ruling ignored. No enforcement mechanism available.</div>
+        <div class="sting">
+          <div class="sting-label">For you, specifically</div>
+          <div class="sting-q">You learned the word "genocide" in history class, probably in the context of the Holocaust. The word was invented precisely so the world would recognise and stop it happening again. It has been applied here, officially. What does it mean that you are reading this in a school lesson, not in a news report about intervention?</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <div class="response-block fade fd2" style="margin-top:1.4rem">
+    <div class="response-label">Which case surprised you most — and why?</div>
+    <textarea class="response-field" placeholder="Be specific. One case. One reason." data-key="q6" rows="2"></textarea>
+    <div class="response-saved" id="saved-q6">saved ✓</div>
+  </div>
 </div>
 
-<!-- 11 -->
+<!-- ═══════════════════════════════════════════
+     7 — ENFORCEMENT ARCHITECTURE
+════════════════════════════════════════════ -->
 <div class="slide fade">
-    <h2>This is what happens.</h2>
-    <p>Rights don’t enforce themselves.</p>
-    <p class="quote">They exist only if someone defends them.</p>
+  <div class="bg-number">7</div>
+  <p class="eyebrow">Who is supposed to stop this?</p>
+  <h2>Four mechanisms. All with <span class="red">built-in limits.</span></h2>
+  <div class="enforcer-grid fade fd1">
+    <div class="enforcer-box">
+      <div class="enforcer-name">UN Security Council</div>
+      <div class="enforcer-body">Can authorise military intervention or sanctions. 15 members, 5 permanent. Any permanent member can veto any resolution — including about their own conduct or their allies'.</div>
+      <div class="enforcer-verdict v-blocked">↯ Structurally blocked when major powers are involved</div>
+    </div>
+    <div class="enforcer-box">
+      <div class="enforcer-name">International Criminal Court</div>
+      <div class="enforcer-body">Can prosecute individuals for war crimes, crimes against humanity, genocide. No police force. Cannot act without state cooperation. China, Russia, and the US have not ratified the Rome Statute.</div>
+      <div class="enforcer-verdict v-blocked">↯ Cannot compel. Cannot reach non-members.</div>
+    </div>
+    <div class="enforcer-box">
+      <div class="enforcer-name">International Court of Justice</div>
+      <div class="enforcer-body">Settles disputes between states. Issues legally binding rulings. Cannot enforce them. If a state refuses, the only recourse is the Security Council — which can be vetoed.</div>
+      <div class="enforcer-verdict v-weak">↯ Circular: depends on the same body it's meant to bypass</div>
+    </div>
+    <div class="enforcer-box">
+      <div class="enforcer-name">NGOs + Media pressure</div>
+      <div class="enforcer-body">Amnesty International, Human Rights Watch, investigative journalism. They document, expose, name. No legal authority. Effective only when states decide to respond — usually when strategically convenient.</div>
+      <div class="enforcer-verdict v-limited">↯ Influence, not authority</div>
+    </div>
+  </div>
+  <div class="vote-section fade fd2">
+    <div class="vote-q">Which of these four is the most useful — even given its limits?</div>
+    <div class="vote-opts">
+      <button class="vote-btn" onclick="vote(this,'v7','unsc')">UN Security Council <div class="vote-bar-wrap"><div class="vote-bar-fill" id="vb7-unsc"></div></div></button>
+      <button class="vote-btn" onclick="vote(this,'v7','icc')">ICC <div class="vote-bar-wrap"><div class="vote-bar-fill" id="vb7-icc"></div></div></button>
+      <button class="vote-btn" onclick="vote(this,'v7','icj')">ICJ <div class="vote-bar-wrap"><div class="vote-bar-fill" id="vb7-icj"></div></div></button>
+      <button class="vote-btn" onclick="vote(this,'v7','ngo')">NGOs + Media <div class="vote-bar-wrap"><div class="vote-bar-fill" id="vb7-ngo"></div></div></button>
+    </div>
+    <div class="vote-note">tap · show your screen · discuss</div>
+  </div>
 </div>
 
-<!-- 12 -->
-<div class="slide fade" style="align-items:flex-end; text-align:right;">
-    <p class="quote">If no one stops it…<br>were those rights ever real?</p>
+<!-- ═══════════════════════════════════════════
+     8 — THE STRUCTURAL ARGUMENT
+════════════════════════════════════════════ -->
+<div class="slide fade" style="background:radial-gradient(ellipse 70% 50% at 20% 50%,rgba(160,10,10,0.14) 0%,transparent 70%)">
+  <div class="bg-number">8</div>
+  <p class="eyebrow">The structural argument</p>
+  <h2>The system isn't broken. <span class="red">It was built this way.</span></h2>
+  <div class="columns fade fd1">
+    <div>
+      <div class="col-label">State sovereignty</div>
+      <p style="font-size:0.88rem;line-height:1.6">The Peace of Westphalia (1648) established the principle that states have supreme authority within their borders. Human rights law is the attempt to override that. But the states that enforce human rights norms are the same states that invoke sovereignty when it suits them. The contradiction is structural, not accidental.</p>
+    </div>
+    <div>
+      <div class="col-label">Power, not principle</div>
+      <p style="font-size:0.88rem;line-height:1.6">Whether violations get a response depends not on the violation — it depends on whether the violating state has powerful allies, strategic resources, or a Security Council veto. Iraq 2003: invaded without UN authorisation. Saudi Arabia 2018: G20 invitation. The application of human rights norms is systematically uneven. That unevenness is not a bug.</p>
+    </div>
+  </div>
+  <div class="pull fade fd2">The countries that wrote the rules also wrote the exceptions.</div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     9 — CHOICE MECHANIC
+════════════════════════════════════════════ -->
+<div class="slide fade">
+  <div class="bg-number">9</div>
+  <p class="eyebrow">Your turn</p>
+  <h2>A government needs to crush opposition. <span class="red">Which right do they remove first?</span></h2>
+  <p>Pick one. Think about which removal makes the others easier to take.</p>
+  <div class="choice-row">
+    <button class="choice-btn" onclick="choose(this,'speech')">Freedom of speech</button>
+    <button class="choice-btn" onclick="choose(this,'privacy')">Privacy</button>
+    <button class="choice-btn" onclick="choose(this,'trial')">Fair trial</button>
+    <button class="choice-btn" onclick="choose(this,'assembly')">Freedom of assembly</button>
+    <button class="choice-btn" onclick="choose(this,'press')">Free press</button>
+  </div>
+  <div class="chosen-display" id="chosen-display"></div>
+  <div class="consequence" id="c-speech">
+    <div class="c-head">Speech — the visible choice</div>
+    <div class="c-body">Opposition cannot organise publicly. Dissent becomes private, then dangerous, then silent. But silencing speech requires enforcement — surveillance (privacy gone) and prosecution outside transparent process (fair trial gone). Speech suppression almost always cascades. It's the choice that announces itself.</div>
+    <div class="c-cascade">↳ forces: surveillance apparatus · arbitrary detention · press criminalisation</div>
+  </div>
+  <div class="consequence" id="c-privacy">
+    <div class="c-head">Privacy — the efficient choice</div>
+    <div class="c-body">A state that monitors all communication can pre-empt dissent before it organises. You don't suppress speech if you know who's thinking about it. China's mass surveillance architecture is the model — social credit, facial recognition, digital ID. Less visible than speech suppression. More total.</div>
+    <div class="c-cascade">↳ forces: self-censorship · chilling effect on assembly · predictive detention</div>
+  </div>
+  <div class="consequence" id="c-trial">
+    <div class="c-head">Fair trial — the precise choice</div>
+    <div class="c-body">Detention without due process lets the state remove specific individuals without evidence. Targeted, surgical repression. Guantánamo. Administrative detention in multiple states. "Preventive" arrest in Russia. Less scalable than surveillance, more useful against known opponents.</div>
+    <div class="c-cascade">↳ forces: fear of arbitrary arrest · silence through threat · state impunity</div>
+  </div>
+  <div class="consequence" id="c-assembly">
+    <div class="c-head">Assembly — the movement-killer</div>
+    <div class="c-body">Collective action requires physical co-presence. Remove assembly and opposition cannot form. Individuals stay isolated. Belarus 2020, Hong Kong 2019–20: both governments criminalised protest before broader crackdowns. Assembly is often the first domino because it's where individual dissent becomes political force.</div>
+    <div class="c-cascade">↳ forces: movement fragmentation · protest criminalisation · social atomisation</div>
+  </div>
+  <div class="consequence" id="c-press">
+    <div class="c-head">Press — the frame-control choice</div>
+    <div class="c-body">Control the information and you control what's real. Without independent media, violations go unreported or are reported in state-approved language. Hungary, Turkey, Russia: press control consistently precedes broader rights erosion. Visibility is the condition for accountability. Remove visibility, remove the condition.</div>
+    <div class="c-cascade">↳ forces: impunity through obscurity · propaganda normalisation · victim isolation</div>
+  </div>
+  <div class="response-block fade fd2" style="margin-top:1.4rem">
+    <div class="response-label">Why that one? What does it enable that the others don't?</div>
+    <textarea class="response-field" placeholder="One or two sentences." data-key="q9" rows="2"></textarea>
+    <div class="response-saved" id="saved-q9">saved ✓</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     10 — THE PHILOSOPHICAL CRACK
+════════════════════════════════════════════ -->
+<div class="slide fade">
+  <div class="bg-number">10</div>
+  <p class="eyebrow">The question underneath the question</p>
+  <h2>If rights only exist when power agrees to respect them —<br><span class="red">were they ever rights?</span></h2>
+  <div class="columns fade fd1">
+    <div>
+      <div class="col-label">The realist position</div>
+      <p style="font-size:0.88rem;line-height:1.6">Rights are a language game. States use them when convenient, ignore them when not. The enforcement gap proves "universal rights" describes an aspiration, not a reality. International institutions are arenas of power dressed as arenas of justice. Norms matter only when powerful states want them to.</p>
+    </div>
+    <div>
+      <div class="col-label">The idealist position</div>
+      <p style="font-size:0.88rem;line-height:1.6">Imperfect enforcement doesn't negate the idea. Domestic law is also unevenly applied — we don't therefore conclude law is meaningless. The UDHR created a language of accountability that didn't exist before 1948. States that violate rights must now justify themselves publicly. The frame has power even without a court behind it.</p>
+    </div>
+  </div>
+  <div class="vote-section fade fd2">
+    <div class="vote-q">Which position is closer to how you see it now?</div>
+    <div class="vote-opts">
+      <button class="vote-btn" onclick="vote(this,'v10','realist')">Realist — rights are political, not universal <div class="vote-bar-wrap"><div class="vote-bar-fill" id="vb10-realist"></div></div></button>
+      <button class="vote-btn" onclick="vote(this,'v10','idealist')">Idealist — the idea still matters even if enforcement fails <div class="vote-bar-wrap"><div class="vote-bar-fill" id="vb10-idealist"></div></div></button>
+      <button class="vote-btn" onclick="vote(this,'v10','both')">Both — it's not one or the other <div class="vote-bar-wrap"><div class="vote-bar-fill" id="vb10-both"></div></div></button>
+    </div>
+    <div class="vote-note">tap · show your screen · no wrong answer</div>
+  </div>
+  <div class="pull fade fd3">The gap between what is claimed and what is done — that gap is the lesson.</div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     11 — CLOSE / ECHO
+════════════════════════════════════════════ -->
+<div class="slide fade slide--right" style="background:radial-gradient(ellipse 60% 50% at 80% 50%,rgba(160,10,10,0.16) 0%,transparent 70%)">
+  <div class="bg-number" style="left:-0.02em;right:auto">11</div>
+  <p class="eyebrow">One last thing</p>
+  <h2 style="max-width:18ch">Rights don't enforce themselves. Someone has to decide they're worth defending.</h2>
+  <p style="margin-top:1rem;text-align:right;max-width:44ch;align-self:flex-end">That person is almost never the state doing the violating.<br>It's usually someone with considerably less power — and more to lose.</p>
+
+  <div style="margin-top:2rem;text-align:right;max-width:560px;align-self:flex-end">
+    <p class="eyebrow" style="margin-bottom:1rem">You answered this at the start —</p>
+    <div class="echo-line" id="echo-q2">Your government locks you up. Who decides if that's legal?</div>
+    <div style="margin-top:1rem;font-family:var(--mono);font-size:0.72rem;letter-spacing:0.08em;color:var(--dim)" id="echo-answer">Scroll back to see what you wrote.</div>
+  </div>
+
+  <div class="response-block fade fd1" style="margin-top:1.8rem;align-self:flex-end;text-align:left">
+    <div class="response-label">Has your answer changed?</div>
+    <textarea class="response-field" placeholder="Same answer? Different one? What shifted?" data-key="q11" rows="2"></textarea>
+    <div class="response-saved" id="saved-q11">saved ✓</div>
+  </div>
+
+  <p style="margin-top:1.4rem;text-align:right;font-family:var(--mono);font-size:0.68rem;letter-spacing:0.1em;color:var(--dim)">Human Rights — Not Optional · DSP · Year 10</p>
 </div>
 
 <script>
-const observer = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-        entry.target.classList.toggle('visible', entry.isIntersecting);
-    });
-}, { threshold: 0.4 });
+/* ─── PROGRESS BAR ─── */
+const bar=document.getElementById('bar');
+window.addEventListener('scroll',()=>{
+  bar.style.width=(window.scrollY/(document.body.scrollHeight-window.innerHeight)*100)+'%';
+  updateDots();
+  showEcho();
+});
 
-document.querySelectorAll('.fade').forEach(el => observer.observe(el));
+/* ─── SLIDE DOTS ─── */
+const slides=document.querySelectorAll('.slide');
+const dotWrap=document.getElementById('dots');
+slides.forEach((_,i)=>{
+  const d=document.createElement('div');
+  d.className='dot';
+  d.onclick=()=>slides[i].scrollIntoView({behavior:'smooth'});
+  dotWrap.appendChild(d);
+});
+function updateDots(){
+  const dotEls=dotWrap.querySelectorAll('.dot');
+  const mid=window.innerHeight/2;
+  let active=0;
+  slides.forEach((s,i)=>{
+    const r=s.getBoundingClientRect();
+    if(r.top<=mid)active=i;
+  });
+  dotEls.forEach((d,i)=>{
+    d.className='dot'+(i===active?' active':i<active?' done':'');
+  });
+}
+updateDots();
+
+/* ─── FADE IN ─── */
+const obs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('vis')});
+},{threshold:0.2});
+document.querySelectorAll('.fade').forEach(el=>obs.observe(el));
+
+/* ─── PERSIST RESPONSES ─── */
+document.querySelectorAll('.response-field').forEach(el=>{
+  const k='hr_'+el.dataset.key;
+  el.value=localStorage.getItem(k)||'';
+  el.addEventListener('input',()=>{
+    localStorage.setItem(k,el.value);
+    const saved=document.getElementById('saved-'+el.dataset.key);
+    if(saved){saved.classList.add('show');setTimeout(()=>saved.classList.remove('show'),1800)}
+  });
+});
+
+/* ─── ECHO OPENING ANSWER ON FINAL SLIDE ─── */
+function showEcho(){
+  const last=slides[slides.length-1];
+  const r=last.getBoundingClientRect();
+  if(r.top<window.innerHeight*0.6){
+    const ans=localStorage.getItem('hr_q2');
+    const el=document.getElementById('echo-answer');
+    if(ans&&ans.trim()){
+      el.textContent='"'+ans.trim()+'"';
+      el.style.color='var(--ink)';
+      el.style.fontStyle='italic';
+      el.style.fontSize='0.9rem';
+    }
+    document.getElementById('echo-q2').classList.add('lit');
+  }
+}
+
+/* ─── REVEAL MECHANIC ─── */
+function toggleReveal(btn){
+  const content=btn.nextElementSibling;
+  const isOpen=content.classList.contains('open');
+  btn.classList.toggle('open',!isOpen);
+  content.classList.toggle('open',!isOpen);
+}
+
+/* ─── ARTICLE TAP ─── */
+function tapArticle(box){
+  box.classList.toggle('tapped');
+}
+
+/* ─── CHOICE MECHANIC ─── */
+function choose(btn,key){
+  document.querySelectorAll('.choice-btn').forEach(b=>b.classList.remove('chosen'));
+  document.querySelectorAll('.consequence').forEach(c=>c.classList.remove('show'));
+  btn.classList.add('chosen');
+  const display=document.getElementById('chosen-display');
+  display.textContent=btn.textContent;
+  display.classList.add('show');
+  const el=document.getElementById('c-'+key);
+  if(el)el.classList.add('show');
+}
+
+/* ─── VOTE / POLLING ─── */
+const votes={};
+function vote(btn,group,key){
+  if(votes[group])return;
+  votes[group]=key;
+  const opts=btn.closest('.vote-opts').querySelectorAll('.vote-btn');
+  opts.forEach(b=>b.classList.remove('voted'));
+  btn.classList.add('voted');
+  const stored=JSON.parse(localStorage.getItem('hr_vote_'+group)||'{}');
+  stored[key]=(stored[key]||0)+1;
+  localStorage.setItem('hr_vote_'+group,JSON.stringify(stored));
+  renderVotes(group,stored,opts);
+}
+function renderVotes(group,data,opts){
+  const total=Object.values(data).reduce((a,b)=>a+b,0)||1;
+  opts.forEach(btn=>{
+    const parts=btn.getAttribute('onclick').match(/'([^']+)'\)$/);
+    if(!parts)return;
+    const k=parts[1];
+    const pct=Math.round(((data[k]||0)/total)*100);
+    const fill=btn.querySelector('.vote-bar-fill');
+    if(fill)fill.style.width=pct+'%';
+  });
+}
+/* restore vote bars from localStorage */
+['v3','v7','v10'].forEach(group=>{
+  const stored=JSON.parse(localStorage.getItem('hr_vote_'+group)||'{}');
+  if(Object.keys(stored).length===0)return;
+  document.querySelectorAll(`[onclick*="'${group}'"]`).forEach(btn=>{
+    const opts=btn.closest('.vote-opts');
+    if(opts)renderVotes(group,stored,opts.querySelectorAll('.vote-btn'));
+  });
+});
 </script>
-
 </body>
 </html>
